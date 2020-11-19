@@ -1,40 +1,57 @@
 import { PanelPlugin } from '@grafana/data';
-import { SimpleOptions } from './types';
-import { SimplePanel } from './SimplePanel';
+import { SankeyOptions } from './types';
+import { SankeyPanel } from './SankeyPanel';
 
-export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions(builder => {
+export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOptions(builder => {
   return builder
-    .addTextInput({
-      path: 'text',
-      name: 'Simple text option',
-      description: 'Description of panel option',
-      defaultValue: 'Default value of text input option',
-    })
-    .addBooleanSwitch({
-      path: 'showSeriesCount',
-      name: 'Show series counter',
-      defaultValue: false,
-    })
-    .addRadio({
-      path: 'seriesCountSize',
-      defaultValue: 'sm',
-      name: 'Series counter size',
+    .addSelect({
+      path: 'align',
+      name: 'Align',
+      defaultValue: 'Justify',
       settings: {
         options: [
           {
-            value: 'sm',
-            label: 'Small',
+            value: 'Justify',
+            label: 'Justify',
           },
           {
-            value: 'md',
-            label: 'Medium',
+            value: 'Left',
+            label: 'Left',
           },
           {
-            value: 'lg',
-            label: 'Large',
+            value: 'Right',
+            label: 'Right',
+          },
+          {
+            value: 'Center',
+            label: 'Center',
           },
         ],
       },
-      showIf: config => config.showSeriesCount,
+    })
+    .addSelect({
+      path: 'edgeColor',
+      name: 'Edge Color',
+      defaultValue: 'path',
+      settings: {
+        options: [
+          {
+            value: 'path',
+            label: 'input-output',
+          },
+          {
+            value: 'input',
+            label: 'input',
+          },
+          {
+            value: 'output',
+            label: 'output',
+          },
+          {
+            value: 'none',
+            label: 'none',
+          },
+        ],
+      },
     });
 });
