@@ -109,6 +109,42 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     return label;
   };
 
+  // NODE HOVER
+  const showLinks = currentNode => {
+    const linkedNodes = [];
+
+    let traverse = [
+      {
+        linkType: 'sourceLinks',
+        nodeType: 'target',
+      },
+      {
+        linkType: 'targetLinks',
+        nodeType: 'source',
+      },
+    ];
+
+    traverse.forEach(step => {
+      currentNode[step.linkType].forEach(l => {
+        linkedNodes.push(l[step.nodeType]);
+      });
+    });
+
+    // highlight linked nodes
+    d3.selectAll('.sankey-node').style('opacity', node =>
+      currentNode.name === node.name || linkedNodes.find(linkedNode => linkedNode.name === node.name) ? '1' : '0.2'
+    );
+    // highlight links
+    d3.selectAll('.sankey-link').style('opacity', link =>
+      link && (link.source.name === currentNode.name || link.target.name === currentNode.name) ? '1' : '0.2'
+    );
+  };
+
+  const showAll = () => {
+    d3.selectAll('.sankey-node').style('opacity', '1');
+    d3.selectAll('.sankey-link').style('opacity', '1');
+  };
+
   // ------------------------------- CHART  ------------------------------
   const chart = svg => {
     // SVG STYLING
@@ -133,15 +169,18 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     const node = bounds
       .append('g')
       .attr('stroke', '#000')
-      .selectAll('rect')
+      .selectAll('sankey-node')
       .data(nodes, node => node.name)
       .join('rect')
+      .attr('class', 'sankey-node')
       .attr('x', d => d.x0)
       .attr('y', d => d.y0)
       .attr('height', d => d.y1 - d.y0)
       .attr('width', d => d.x1 - d.x0)
       .attr('stroke', d => d3.color(color(d)).darker(0.5))
-      .attr('fill', color);
+      .attr('fill', color)
+      .on('mouseover', showLinks)
+      .on('mouseout', showAll);
 
     // LINKS
     const link = bounds
@@ -175,6 +214,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
 
     link
       .append('path')
+      .attr('class', 'sankey-link')
       .attr('d', d3Sankey.sankeyLinkHorizontal())
       .attr('stroke', d =>
         config.edgeColor === 'none'
