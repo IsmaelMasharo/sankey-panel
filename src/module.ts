@@ -53,5 +53,30 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOption
           },
         ],
       },
+    })
+    .addSelect({
+      path: 'displayValues',
+      name: 'Display Values',
+      defaultValue: 'none',
+      settings: {
+        options: [
+          {
+            value: 'total',
+            label: 'Totals',
+          },
+          {
+            value: 'percentage',
+            label: 'Percentages',
+          },
+          {
+            value: 'both',
+            label: 'Both',
+          },
+          {
+            value: 'none',
+            label: 'None',
+          },
+        ],
+      },
     });
 });

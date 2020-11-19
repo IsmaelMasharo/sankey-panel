@@ -10,6 +10,7 @@ import { stylesFactory, useTheme } from '@grafana/ui';
 export const SankeyPanel = ({ options, data, width, height }) => {
   // -----------------------    CHART CONSTANTS    -----------------------
   const CHART_REQUIRED_FIELDS = { source: 'source', target: 'target', value: 'value' };
+  const DISPLAY_VALUES = { total: 'total', percentage: 'percentage', both: 'both', none: 'none' };
 
   // -----------------------  CHART CONFIGURATION  -----------------------
   const config = {
@@ -17,6 +18,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     align: options.align,
     color: options.colorScale,
     edgeColor: options.edgeColor,
+    displayValues: options.displayValues,
   };
 
   // ----------------------- BASE DATA ACQUISITION -----------------------
@@ -83,6 +85,30 @@ export const SankeyPanel = ({ options, data, width, height }) => {
       links: links.map(d => Object.assign({}, d)),
     });
 
+  // NODE LABELING
+  const labelNode = (nodes, currentNode) => {
+    const nodesAtDepth = nodes.filter(node => node.depth === currentNode.depth);
+    const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
+    const nodePercent = d3.format('.2~%')(currentNode.value / totalAtDepth);
+
+    let label = currentNode.name;
+
+    switch (config.displayValues) {
+      case DISPLAY_VALUES.total:
+        label = `${label}: ${currentNode.value}`;
+        break;
+      case DISPLAY_VALUES.percentage:
+        label = `${label}: ${nodePercent}`;
+        break;
+      case DISPLAY_VALUES.both:
+        label = `${label}: ${nodePercent} - ${currentNode.value}`;
+        break;
+      default:
+        break;
+    }
+    return label;
+  };
+
   // ------------------------------- CHART  ------------------------------
   const chart = svg => {
     // SVG STYLING
@@ -104,7 +130,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     const { nodes, links } = sankey(graph);
 
     // NODES
-    const rectNodes = bounds
+    const node = bounds
       .append('g')
       .attr('stroke', '#000')
       .selectAll('rect')
@@ -173,7 +199,11 @@ export const SankeyPanel = ({ options, data, width, height }) => {
       .attr('y', d => (d.y1 + d.y0) / 2)
       .attr('dy', '0.35em')
       .attr('text-anchor', d => (d.x0 < width / 2 ? 'start' : 'end'))
-      .text(d => d.name);
+      .text(d => labelNode(nodes, d));
+
+    node.append('title').text(d => `${d.name}\n${d.value}`);
+
+    link.append('title').text(d => `${d.source.name} → ${d.target.name}\n${d.value}`);
   };
 
   return (
