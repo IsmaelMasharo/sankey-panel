@@ -86,22 +86,26 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     });
 
   // NODE LABELING
+  const formatValue = value => d3.format('.2f')(value);
+  const formatPercent = percent => d3.format('.2~%')(percent);
+  const formatThousand = value => d3.format('.3~s')(value);
+
   const labelNode = (nodes, currentNode) => {
     const nodesAtDepth = nodes.filter(node => node.depth === currentNode.depth);
     const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
-    const nodePercent = d3.format('.2~%')(currentNode.value / totalAtDepth);
+    const nodeValue = formatThousand(currentNode.value)
+    const nodePercent = formatPercent(currentNode.value / totalAtDepth);
 
     let label = currentNode.name;
-
     switch (config.displayValues) {
       case DISPLAY_VALUES.total:
-        label = `${label}: ${currentNode.value}`;
+        label = `${label}: ${nodeValue}`;
         break;
       case DISPLAY_VALUES.percentage:
         label = `${label}: ${nodePercent}`;
         break;
       case DISPLAY_VALUES.both:
-        label = `${label}: ${nodePercent} - ${currentNode.value}`;
+        label = `${label}: ${nodePercent} - ${nodeValue}`;
         break;
       default:
         break;
@@ -175,6 +179,8 @@ export const SankeyPanel = ({ options, data, width, height }) => {
       .attr('class', 'sankey-node')
       .attr('x', d => d.x0)
       .attr('y', d => d.y0)
+      .attr('rx', 2)
+      .attr('ry', 2)
       .attr('height', d => d.y1 - d.y0)
       .attr('width', d => d.x1 - d.x0)
       .attr('stroke', d => d3.color(color(d)).darker(0.5))
@@ -241,9 +247,8 @@ export const SankeyPanel = ({ options, data, width, height }) => {
       .attr('text-anchor', d => (d.x0 < width / 2 ? 'start' : 'end'))
       .text(d => labelNode(nodes, d));
 
-    node.append('title').text(d => `${d.name}\n${d.value}`);
-
-    link.append('title').text(d => `${d.source.name} → ${d.target.name}\n${d.value}`);
+    node.append('title').text(d => `${d.name}\n${formatValue(d.value)}`);
+    link.append('title').text(d => `${d.source.name} → ${d.target.name}\n${formatValue(d.value)}`);
   };
 
   return (
