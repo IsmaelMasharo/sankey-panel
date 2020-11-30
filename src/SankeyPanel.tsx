@@ -93,7 +93,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
   const labelNode = (nodes, currentNode) => {
     const nodesAtDepth = nodes.filter(node => node.depth === currentNode.depth);
     const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
-    const nodeValue = formatThousand(currentNode.value)
+    const nodeValue = formatThousand(currentNode.value);
     const nodePercent = formatPercent(currentNode.value / totalAtDepth);
 
     let label = currentNode.name;
@@ -114,7 +114,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
   };
 
   // NODE HOVER
-  const showLinks = currentNode => {
+  const showLinks = (currentNode, svgBounds) => {
     const linkedNodes = [];
 
     let traverse = [
@@ -135,18 +135,22 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     });
 
     // highlight linked nodes
-    d3.selectAll('.sankey-node').style('opacity', node =>
-      currentNode.name === node.name || linkedNodes.find(linkedNode => linkedNode.name === node.name) ? '1' : '0.2'
-    );
+    svgBounds
+      .selectAll('.sankey-node')
+      .style('opacity', node =>
+        currentNode.name === node.name || linkedNodes.find(linkedNode => linkedNode.name === node.name) ? '1' : '0.2'
+      );
     // highlight links
-    d3.selectAll('.sankey-link').style('opacity', link =>
-      link && (link.source.name === currentNode.name || link.target.name === currentNode.name) ? '1' : '0.2'
-    );
+    svgBounds
+      .selectAll('.sankey-link')
+      .style('opacity', link =>
+        link && (link.source.name === currentNode.name || link.target.name === currentNode.name) ? '1' : '0.2'
+      );
   };
 
-  const showAll = () => {
-    d3.selectAll('.sankey-node').style('opacity', '1');
-    d3.selectAll('.sankey-link').style('opacity', '1');
+  const showAll = svgBounds => {
+    svgBounds.selectAll('.sankey-node').style('opacity', '1');
+    svgBounds.selectAll('.sankey-link').style('opacity', '1');
   };
 
   // ------------------------------- CHART  ------------------------------
@@ -185,8 +189,8 @@ export const SankeyPanel = ({ options, data, width, height }) => {
       .attr('width', d => d.x1 - d.x0)
       .attr('stroke', d => d3.color(color(d)).darker(0.5))
       .attr('fill', color)
-      .on('mouseover', showLinks)
-      .on('mouseout', showAll);
+      .on('mouseover', d => showLinks(d, bounds))
+      .on('mouseout', _ => showAll(bounds));
 
     // LINKS
     const link = bounds
