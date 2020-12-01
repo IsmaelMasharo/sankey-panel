@@ -1,13 +1,13 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
 import { PanelProps } from '@grafana/data';
 import { SankeyOptions } from 'types';
-import { css, cx } from 'emotion';
-import { stylesFactory, useTheme } from '@grafana/ui';
 
-export const SankeyPanel = ({ options, data, width, height }) => {
+interface Props extends PanelProps<SankeyOptions> {}
+
+export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) => {
   // -----------------------    CHART CONSTANTS    -----------------------
   const CHART_REQUIRED_FIELDS = { source: 'source', target: 'target', value: 'value' };
   const DISPLAY_VALUES = { total: 'total', percentage: 'percentage', both: 'both', none: 'none' };
@@ -86,7 +86,7 @@ export const SankeyPanel = ({ options, data, width, height }) => {
     });
 
   // NODE LABELING
-  const formatValue = value => d3.format('.2f')(value);
+  const formatValue = value => d3.format('.2~f')(value);
   const formatPercent = percent => d3.format('.2~%')(percent);
   const formatThousand = value => d3.format('.3~s')(value);
 
