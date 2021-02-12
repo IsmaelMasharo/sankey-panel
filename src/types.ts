@@ -8,4 +8,5 @@ export interface SankeyOptions {
   edgeColor: EdgeColor;
   colorScheme: Color;
   displayValues: DisplayValues;
+  highlightOnHover: boolean;
 }

@@ -19,6 +19,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     colorScheme: options.colorScheme,
     edgeColor: options.edgeColor,
     displayValues: options.displayValues,
+    highlightOnHover: options.highlightOnHover
   };
 
   // ----------------------- BASE DATA ACQUISITION -----------------------
@@ -189,8 +190,8 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
       .attr('width', d => d.x1 - d.x0)
       .attr('stroke', d => d3.color(color(d)).darker(0.5))
       .attr('fill', color)
-      .on('mouseover', d => showLinks(d, bounds))
-      .on('mouseout', _ => showAll(bounds));
+      .on('mouseover', d => config.highlightOnHover && showLinks(d, bounds))
+      .on('mouseout', _ => config.highlightOnHover && showAll(bounds));
 
     // LINKS
     const link = bounds

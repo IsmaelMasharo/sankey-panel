@@ -127,5 +127,11 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOption
           },
         ],
       },
-    });
+    })
+    .addBooleanSwitch({
+      path: 'highlightOnHover',
+      name: 'Highlight connections on node hover',
+      defaultValue: false,
+    })
+    ;
 });
