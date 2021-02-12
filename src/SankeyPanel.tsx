@@ -16,7 +16,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   const config = {
     background: '#f8f8fa',
     align: options.align,
-    color: options.colorScale,
+    colorScheme: options.colorScheme,
     edgeColor: options.edgeColor,
     displayValues: options.displayValues,
   };
@@ -62,7 +62,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
 
   // -----------------------    CHART ELEMENTS    -----------------------
   // COLOR
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+  const colorScale = d3.scaleOrdinal(d3[`scheme${config.colorScheme}`]);
   const color = node => colorScale(node.name);
 
   // SANKEY GENERATOR
@@ -73,7 +73,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     .nodeId(d => d.name)
     .nodeAlign(sankeyAlign)
     .nodeWidth(15)
-    .nodePadding(10)
+    .nodePadding(20)
     .extent([
       [1, 5],
       [dimensions.boundedWidth - 1, dimensions.boundedHeight - 5],
@@ -196,7 +196,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     const link = bounds
       .append('g')
       .attr('fill', 'none')
-      .attr('stroke-opacity', 0.5)
+      .attr('stroke-opacity', 0.3)
       .selectAll('g')
       .data(links, link => `${link.source.name}-${link.target.name}`)
       .join('g')
