@@ -74,7 +74,7 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOption
           {
             value: 'Set3',
             label: 'Set3',
-          }
+          },
         ],
       },
     })
@@ -132,6 +132,5 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOption
       path: 'highlightOnHover',
       name: 'Highlight connections on node hover',
       defaultValue: false,
-    })
-    ;
+    });
 });

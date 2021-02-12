@@ -19,7 +19,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     colorScheme: options.colorScheme,
     edgeColor: options.edgeColor,
     displayValues: options.displayValues,
-    highlightOnHover: options.highlightOnHover
+    highlightOnHover: options.highlightOnHover,
   };
 
   // ----------------------- BASE DATA ACQUISITION -----------------------
