@@ -18,7 +18,7 @@ Tested on Grafana 7.3.1
 
 ## Required Fields
 
-The diagram gets constructed from a data source with 3 mandatory fields: *source* (text), *target* (text), *value* (numeric). Being an acyclic implementation of the Sankey diagram **loops are not allowed**. To avoid *circular link error* (a masked prefix)[https://github.com/IsmaelMasharo/sankey-panel/issues/1#issuecomment-757972917] could be set on the target values.
+The diagram gets constructed from a data source with 3 mandatory fields: *source* (text), *target* (text), *value* (numeric). Being an acyclic implementation of the Sankey diagram **loops are not allowed**. To avoid *circular link error* [a masked prefix](https://github.com/IsmaelMasharo/sankey-panel/issues/1#issuecomment-757972917) could be set on the target values.
 
 ## API Reference
 
@@ -26,11 +26,11 @@ There are 5 options for displaying the diagram: *Alignment*, *Color*, *Edge Colo
 
 ### Alignment
 
-Arranges the nodes to one of the following sides: Left, Right, Center, Justify. See d3 (sankey nodeAlign)[https://github.com/d3/d3-sankey#alignments] for image reference.
+Arranges the nodes to one of the following sides: Left, Right, Center, Justify. See d3 [sankey nodeAlign](https://github.com/d3/d3-sankey#alignments) for image reference.
 
 ### Color
 
-Nodes and links color. Based on d3 (categorical schemes)[https://github.com/d3/d3-scale-chromatic#categorical].
+Nodes and links color. Based on d3 [categorical schemes](https://github.com/d3/d3-scale-chromatic#categorical).
 
 ### Edge Color
 
