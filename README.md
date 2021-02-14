@@ -18,9 +18,36 @@ Tested on Grafana 7.3.1
 
 ## Required Fields
 
-The diagram gets constructed from a data source with 3 mandatory fields: *source* (text), *target* (text), *value* (numeric). Being an acyclic implementation of the Sankey diagram **loops are not allowed**. To avoid *circular link error* [a masked prefix](https://github.com/IsmaelMasharo/sankey-panel/issues/1#issuecomment-757972917) could be set on the target values.
+The diagram gets constructed from a data source **formatted as table** with 3 mandatory fields: **source** (text), **target** (text), **value** (numeric). The diagram at the beginning was created with the following table format:
 
-## API Reference
+|  source  |  target  |  value  |
+|----------|----------|---------|
+| A        | D        | 2       |
+| B        | D        | 2       |
+| B        | E        | 2       |
+| A        | F        | 2       |
+| D        | E        | 2       |
+| D        | F        | 3       |
+| E        | F        | 4       |
+| C        | D        | 1       |
+| C        | E        | 1       |
+| E        | G        | 1       |
+
+Being an acyclic implementation of the Sankey diagram **loops are not allowed**: 
+
+|  source  |  target  |  value  |
+|----------|----------|---------|
+| A        | B        | 2       |
+| B        | A (*x*)  | 2       |
+
+To avoid *circular link error* [a masked prefix](https://github.com/IsmaelMasharo/sankey-panel/issues/1#issuecomment-757972917) could be set on the target values:
+
+|  source  |  target  |  value  |
+|----------|----------|---------|
+| A        | B        | 2       |
+| B        | P-A      | 2       | 
+
+## Display Options
 
 There are 5 options for displaying the diagram: *Alignment*, *Color*, *Edge Color*, *Display Values*, *Highlight Connections*
 
@@ -53,3 +80,7 @@ Values are shown next to the node name.
 ### Highlight Connections
 
 Boolean. Highlights links and nodes with a direct connection to the hovered node.
+
+## TODO
+
+Error handling. In the meantime, on errors use the default Table visualization to double check values.
