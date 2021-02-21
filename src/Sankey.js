@@ -1,6 +1,9 @@
 import * as d3 from 'd3';
 import * as d3Sankey from 'd3-sankey';
 
+const DISPLAY_VALUES = { total: 'total', percentage: 'percentage', both: 'both', none: 'none' };
+const EDGE_COLORS = { none: 'none', path: 'path', input: 'input', output: 'output'};
+
 export class Sankey {
   constructor(svg, container) {
     this._svg = svg;
@@ -45,8 +48,6 @@ export class Sankey {
     this._setColorScale();
     this._configureSankey();
     this._calculateSankey();
-
-    this._gBound = this._container.append("g");
   }
 
 
@@ -130,16 +131,93 @@ export class Sankey {
 
   _setLinkStroke(d) {
       switch (this._edgeColor) {
-        case 'none':
+        case EDGE_COLORS.none:
           return '#aaa';
-        case 'path':
+        case EDGE_COLORS.path:
           return `url(#${d.uid})`;
-        case 'input':
+        case EDGE_COLORS.input:
           return this._color(d.source)
-        default:
+        case EDGE_COLORS.output:
           return this._color(d.target)
+        default:
+          return
       }
   }
+
+  // NODE HOVER
+  _showLinks(currentNode) {
+    const linkedNodes = [];
+
+    let traverse = [
+      {
+        linkType: 'sourceLinks',
+        nodeType: 'target',
+      },
+      {
+        linkType: 'targetLinks',
+        nodeType: 'source',
+      },
+    ];
+
+    traverse.forEach(step => {
+      currentNode[step.linkType].forEach(l => {
+        linkedNodes.push(l[step.nodeType]);
+      });
+    });
+
+    // highlight linked nodes
+    this._gBound
+      .selectAll('.sankey-node')
+      .style('opacity', node =>
+        currentNode.name === node.name ||
+        linkedNodes.find(linkedNode => linkedNode.name === node.name) ? 
+        '1' : '0.2'
+      );
+
+    // highlight links
+    this._gBound
+      .selectAll('.sankey-link')
+      .style('opacity', link =>
+        link && (
+          link.source.name === currentNode.name || 
+          link.target.name === currentNode.name
+        ) ? 
+        '1' : '0.2'
+      );
+  };
+
+  _showAll() {
+    this._gBound.selectAll('.sankey-node').style('opacity', '1');
+    this._gBound.selectAll('.sankey-link').style('opacity', '1');
+  };
+
+  // NODE LABELING
+  _formatValue(value) { return d3.format('.2~f')(value); }
+  _formatPercent(percent)  { return d3.format('.2~%')(percent); }
+  _formatThousand(value) { return d3.format('.3~s')(value); }
+
+  _labelNode(currentNode) {
+    const nodesAtDepth = this._nodes.filter(node => node.depth === currentNode.depth);
+    const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
+    const nodeValue = this._formatThousand(currentNode.value);
+    const nodePercent = this._formatPercent(currentNode.value / totalAtDepth);
+
+    let label = currentNode.name;
+    switch (this._displayValues) {
+      case DISPLAY_VALUES.total:
+        label = `${label}: ${nodeValue}`;
+        break;
+      case DISPLAY_VALUES.percentage:
+        label = `${label}: ${nodePercent}`;
+        break;
+      case DISPLAY_VALUES.both:
+        label = `${label}: ${nodePercent} - ${nodeValue}`;
+        break;
+      default:
+        break;
+    }
+    return label;
+  };
 
   // ------------------------------   DRAWING   -------------------------------
 
@@ -167,8 +245,8 @@ export class Sankey {
         .attr('width', d => d.x1 - d.x0)
         .attr('stroke', d => d3.color(this._color(d)).darker(0.5))
         .attr('fill', d => this._color(d))
-        // this wont work, it has to explicitly pass a function (caveats of using *this*)
-        // .attr('fill', this._color)
+        .on('mouseover', d => this._highlightOnHover && this._showLinks(d))
+        .on('mouseout', _ => this._highlightOnHover && this._showAll());
 
     // LINKS
     this._svgLink = this._gBound
@@ -188,6 +266,28 @@ export class Sankey {
         .attr('d', d3Sankey.sankeyLinkHorizontal())
         .attr('stroke', d => this._setLinkStroke(d))
         .attr('stroke-width', d => Math.max(1, d.width));    
+
+    // LABELS
+    this._gBound
+      .append('g')
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 10)
+      .selectAll('text')
+      .data(this._nodes)
+      .join('text')
+        .attr('x', d => (d.x0 < this._width / 2 ? d.x1 + 6 : d.x0 - 6))
+        .attr('y', d => (d.y1 + d.y0) / 2)
+        .attr('dy', '0.35em')
+        .attr('text-anchor', d => (d.x0 < this._width / 2 ? 'start' : 'end'))
+        .text(d => this._labelNode(d));
+
+    this._svgNode
+      .append('title')
+        .text(d => `${d.name}\n${this._formatValue(d.value)}`);
+
+    this._svgLink
+      .append('title')
+        .text(d => `${d.source.name} → ${d.target.name}\n${this._formatValue(d.value)}`);
   }
 
 
