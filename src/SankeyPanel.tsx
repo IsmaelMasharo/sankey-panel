@@ -16,12 +16,15 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   const requiredFieldsMsg = `Required fields not present: ${Object.keys(CHART_REQUIRED_FIELDS).join(', ')}`;
 
   // -------------------------    REACT HOOKS    --------------------------
-  const [ error, setError ] = useState({ isError: false, message: '', type: '' })
+  const [ error, setError ] = useState({ isError: false, message: '' })
   const [ graph, setGraph ] = useState({ nodes: [], links: [] })
 
   useEffect(() => {
-    console.log('data changed')
-    setGraph(buildGraph())
+    data.error
+    ?
+      setError({isError: true, message: data.error.message})
+    :
+      setGraph(buildGraph())
   }, [data])
 
   // -------------------------  DATA ACQUISITION  -------------------------
@@ -34,8 +37,8 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
 
     // -----------------------      VALIDATIONS     -----------------------
     if (!(sourceAccesor && targetAccesor && valueAccesor)) {
-      setError({ isError: true, message: requiredFieldsMsg, type: '' })
-      return { nodes: [], links: []};
+      setError({ isError: true, message: requiredFieldsMsg })
+      return { nodes: [], links: [] };
     }
     setError({})
 
@@ -54,7 +57,6 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
 
   // ------------------------------- CHART  ------------------------------
   const chart = svg => {
-    console.log('enterchart')
     const sankey = new Sankey(svg)
       .width(width)
       .height(height)
