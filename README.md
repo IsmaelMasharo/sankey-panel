@@ -18,7 +18,7 @@ Tested on Grafana 7.3.1
 
 ## Required Fields
 
-The diagram gets constructed from a data source **formatted as table** with 3 mandatory fields: **source** (text), **target** (text), **value** (numeric). The diagram at the beginning was created with the following table format:
+The diagram gets constructed from a data source **formatted as table** with 3 mandatory fields: **source** (text), **target** (text), **value** (numeric, no nulls). The diagram at the beginning was created with the following table format:
 
 |  source  |  target  |  value  |
 |----------|----------|---------|
@@ -80,7 +80,3 @@ Values are shown next to the node name.
 ### Highlight Connections
 
 Boolean. Highlights links and nodes with a direct connection to the hovered node.
-
-## TODO
-
-Error handling. In the meantime, on errors use the default Table visualization to double check values.
