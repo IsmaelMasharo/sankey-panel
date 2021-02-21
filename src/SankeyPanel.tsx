@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { PanelProps } from '@grafana/data';
-import { Alert } from '@grafana/ui';
 import { SankeyOptions } from 'types';
 import { Sankey } from 'Sankey'
-import { packSiblings, svg } from 'd3';
+import { ErrorMessage } from 'Error'
 
 interface Props extends PanelProps<SankeyOptions> {}
 
@@ -106,16 +105,3 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     />
   );
 };
-
-const ErrorMessage = ({ message }) => (
-  <p style={{
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }}>
-    <Alert>
-      {message}
-    </Alert>
-  </p>
-)
