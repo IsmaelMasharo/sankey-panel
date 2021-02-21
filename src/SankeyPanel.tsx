@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { PanelProps } from '@grafana/data';
+import { Alert } from '@grafana/ui';
 import { SankeyOptions } from 'types';
 import { Sankey } from 'Sankey'
 import { packSiblings, svg } from 'd3';
@@ -14,6 +15,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
 
   // ------------------------    ERROR MESSAGES    ------------------------
   const requiredFieldsMsg = `Required fields not present: ${Object.keys(CHART_REQUIRED_FIELDS).join(', ')}`;
+  const fieldTypeMsg = `Fields should have the following types: source (string), target (string), value (numeric)`;
 
   // -------------------------    REACT HOOKS    --------------------------
   const [ error, setError ] = useState({ isError: false, message: '' })
@@ -28,6 +30,30 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   }, [data])
 
   // -------------------------  DATA ACQUISITION  -------------------------
+  const validate = (sources, targets, values) => {
+    let isValid = true;
+
+    // REQUIRED FIELDS
+    if (!(sources && targets && values)) {
+      setError({ isError: true, message: requiredFieldsMsg })
+      return isValid = false;
+    }
+
+    // FIELD TYPES
+    const sourcesString = sources.every(d => typeof d === 'string')
+    const targetsString = targets.every(d => typeof d === 'string')
+    const valuesNumeric = values.every(d => typeof d === 'number')
+
+    if (!(sourcesString && targetsString && valuesNumeric)) {
+      setError({ isError: true, message: fieldTypeMsg })
+      return isValid = false;
+    }
+
+    setError({});
+
+    return isValid;
+  }
+
   const buildGraph = () => {
     const frame = data.series[0];
 
@@ -35,16 +61,12 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     const targetAccesor = frame.fields.find(field => field.name === CHART_REQUIRED_FIELDS.target);
     const valueAccesor = frame.fields.find(field => field.name === CHART_REQUIRED_FIELDS.value);
 
-    // -----------------------      VALIDATIONS     -----------------------
-    if (!(sourceAccesor && targetAccesor && valueAccesor)) {
-      setError({ isError: true, message: requiredFieldsMsg })
-      return { nodes: [], links: [] };
-    }
-    setError({})
+    const sources = sourceAccesor?.values.toArray();
+    const targets = targetAccesor?.values.toArray();
+    const values = valueAccesor?.values.toArray();
 
-    const sources = sourceAccesor.values.toArray();
-    const targets = targetAccesor.values.toArray();
-    const values = valueAccesor.values.toArray();
+    const isValid = validate(sources, targets, values);
+    if (!isValid) return
   
     const zip = d3.zip(sources, targets, values);
   
@@ -71,9 +93,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   };
 
   return (error.isError ?
-    <p>
-      {error.message}
-    </p>
+    <ErrorMessage message={error.message} />
     :
     <svg
       viewBox={`0 0 ${width} ${height}`}
@@ -86,3 +106,16 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     />
   );
 };
+
+const ErrorMessage = ({ message }) => (
+  <p style={{
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }}>
+    <Alert>
+      {message}
+    </Alert>
+  </p>
+)
