@@ -50,14 +50,12 @@ export class Sankey {
     this._calculateSankey();
   }
 
-
   // ----------------------------   DIMENSIONS   ----------------------------
 
   _setBoundDimensions() {
     this._boundedWidth = this._width - this._marginLeft - this._marginRight;
     this._boundedHeight = this._height - this._marginTop - this._marginBottom;
   }
-
 
   // ------------------------------   COLOR   -------------------------------
 
@@ -68,7 +66,6 @@ export class Sankey {
   _color(node) {
     return this._colorScale(node.name);
   }
-
 
   // ------------------------------   SANKEY   -------------------------------
 
@@ -96,7 +93,6 @@ export class Sankey {
     this._nodes = sankeyData.nodes;
     this._links = sankeyData.links;
   }
-
 
   // ----------------------------   VALIDATIONS   -----------------------------
 
@@ -291,7 +287,6 @@ export class Sankey {
   }
 
 
-
   // -----------------------------------------------------------------------  
   // ------------------------------    API    ------------------------------
   // -----------------------------------------------------------------------  
@@ -330,14 +325,12 @@ export class Sankey {
 
   render() {
     if (!this._validate()) {
-      // error
-      console.log('error')
+      // no graph data
     }
     else {
-        this._init();
-        this._renderSVG()
+      this._init();
+      this._renderSVG()
     }
     return this;
   }
-
 }

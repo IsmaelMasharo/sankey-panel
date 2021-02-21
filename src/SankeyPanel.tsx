@@ -65,7 +65,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
     const values = valueAccesor?.values.toArray();
 
     const isValid = validate(sources, targets, values);
-    if (!isValid) return
+    if (!isValid) {return}
   
     const zip = d3.zip(sources, targets, values);
   
@@ -88,7 +88,11 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
       .highlightOnHover(options.highlightOnHover)
       .data(graph)
 
-    sankey.render()
+    try {
+      sankey.render();
+    } catch (renderError) {
+      setError({isError: true, message: renderError.message})
+    }
   };
 
   return (error.isError ?
