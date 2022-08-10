@@ -87,19 +87,19 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel)
         options: [
           {
             value: 'path',
-            label: 'input-output',
+            label: 'Input-Output',
           },
           {
             value: 'input',
-            label: 'input',
+            label: 'Input',
           },
           {
             value: 'output',
-            label: 'output',
+            label: 'Output',
           },
           {
             value: 'none',
-            label: 'none',
+            label: 'None',
           },
         ],
       },
@@ -133,7 +133,37 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel)
       path: 'highlightOnHover',
       name: 'Highlight connections on node hover',
       defaultValue: false,
-    });
+    })
+	.addSliderInput({
+      path: 'nodeWidth',
+      name: 'Node Width',
+      defaultValue: 24,
+      settings: {
+        min: 5,
+        max: 100,
+        step: 1,
+      },
+	})
+	.addSliderInput({
+      path: 'nodePadding',
+      name: 'Node Padding',
+      defaultValue: 8,
+      settings: {
+        min: 1,
+        max: 100,
+        step: 1,
+      },
+	})
+	.addSliderInput({
+      path: 'iterations',
+      name: 'Layout Iterations',
+      defaultValue: 6,
+      settings: {
+        min: 1,
+        max: 30,
+        step: 1,
+      },
+	});
   })
   .useFieldConfig({
     disableStandardOptions: [FieldConfigProperty.Color, FieldConfigProperty.NoValue, FieldConfigProperty.Max, FieldConfigProperty.Min],

@@ -32,14 +32,15 @@ export class Sankey {
     this._sankeyAlignType = 'Justify';
     this._sankeyAlign = null;
     this._sankeyGenerator = null;
-    this._sankeyNodeWith = 15;
-    this._sankeyNodePadding = 20;
 
     this._svgNode = null;
     this._svgLink = null;
 
     this._displayValues = 'none';
     this._highlightOnHover = false;
+	this._nodeWidth = 24;
+	this._nodePadding = 8;
+	this._iterations = 6;
 
   }
   
@@ -76,8 +77,9 @@ export class Sankey {
       .sankey()
       .nodeId(d => d.name)
       .nodeAlign(this._sankeyAlign)
-      .nodeWidth(this._sankeyNodeWith)
-      .nodePadding(this._sankeyNodePadding)
+      .nodeWidth(this._nodeWidth)
+      .nodePadding(this._nodePadding)
+      .iterations(this._iterations)
       .extent([
         [0, 0],
         [this._boundedWidth, this._boundedHeight],
@@ -325,6 +327,18 @@ export class Sankey {
 
   highlightOnHover(_) {
     return arguments.length ? (this._highlightOnHover = _, this) : this._highlightOnHover;
+  }
+
+  nodeWidth(_) {
+    return arguments.length ? (this._nodeWidth = _, this) : this._nodeWidth;
+  }
+
+  nodePadding(_) {
+    return arguments.length ? (this._nodePadding = _, this) : this._nodePadding;
+  }
+
+  iterations(_) {
+    return arguments.length ? (this._iterations = _, this) : this._iterations;
   }
 
   render() {
