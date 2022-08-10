@@ -1,8 +1,9 @@
-import { PanelPlugin } from '@grafana/data';
+import { PanelPlugin, FieldConfigProperty } from '@grafana/data';
 import { SankeyOptions } from './types';
 import { SankeyPanel } from './SankeyPanel';
 
-export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOptions((builder) => {
+export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel)
+.setPanelOptions((builder) => {
   return builder
     .addSelect({
       path: 'align',
@@ -133,4 +134,7 @@ export const plugin = new PanelPlugin<SankeyOptions>(SankeyPanel).setPanelOption
       name: 'Highlight connections on node hover',
       defaultValue: false,
     });
-});
+  })
+  .useFieldConfig({
+    disableStandardOptions: [FieldConfigProperty.Color, FieldConfigProperty.NoValue, FieldConfigProperty.Max, FieldConfigProperty.Min],
+  });

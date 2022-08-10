@@ -188,14 +188,16 @@ export class Sankey {
   };
 
   // NODE LABELING
-  _formatValue(value) { return d3.format('.2~f')(value); }
+  _formatValue(value) {
+    const display = this._data.valueDisplay(value);
+    return (display.prefix ? display.prefix : '') + display.text + (display.suffix ? display.suffix : '');
+  }
   _formatPercent(percent)  { return d3.format('.2~%')(percent); }
-  _formatThousand(value) { return d3.format('.3~s')(value); }
 
   _labelNode(currentNode) {
     const nodesAtDepth = this._nodes.filter(node => node.depth === currentNode.depth);
     const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
-    const nodeValue = this._formatThousand(currentNode.value);
+    const nodeValue = this._formatValue(currentNode.value);
     const nodePercent = this._formatPercent(currentNode.value / totalAtDepth);
 
     let label = currentNode.name;

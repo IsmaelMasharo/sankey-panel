@@ -16,16 +16,19 @@
     "email": "plugins@grafana.com"
   },
   "devDependencies": {
-    "@grafana/data": "^7.0.0",
-    "@grafana/toolkit": "^7.0.0",
-    "@grafana/ui": "^7.0.0",
-    "@types/d3": "^6.2.0",
-    "emotion": "10.0.27"
+    "@grafana/data": "latest",
+    "@grafana/toolkit": "8.0.6",
+    "@grafana/ui": "latest",
+    "@types/d3": "latest",
+    "@types/d3-sankey": "latest",
+    "emotion": "latest"
   },
   "engines": {
-    "node": ">=12 <13"
+    "node": ">=14"
   },
   "dependencies": {
-    "d3-sankey": "^0.12.3"
+    "d3": ">=7.0.0 <8.0.0",
+    "d3-sankey": "latest",
+    "grafana-plugin-support": "latest"
   }
 }

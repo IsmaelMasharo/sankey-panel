@@ -75,7 +75,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   
     const nodes = Array.from(new Set(sources.concat(targets))).map(node => ({ name: node }));
     const links = zip.map(d => ({ source: d[0], target: d[1], value: +d[2].toFixed(2) }));
-    const graph = { nodes, links };
+    const graph = { nodes, links, valueDisplay: valueAccesor.display };
 
     return graph
   }
