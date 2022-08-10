@@ -24,6 +24,7 @@ export class Sankey {
     this._marginBottom = 20;
     this._marginLeft = 20;
 
+    this._textColor = '#000000';
     this._edgeColor = 'path';
     this._colorScheme = 'Tableau10';
     this._colorScale = null;
@@ -263,7 +264,8 @@ export class Sankey {
     this._gBound
       .append('g')
         .attr('font-family', 'sans-serif')
-        .attr('font-size', 10)
+        .attr('font-size', 12)
+        .attr('fill', this._textColor)
       .selectAll('text')
       .data(this._nodes)
       .join('text')
@@ -309,6 +311,10 @@ export class Sankey {
 
   edgeColor(_) {
     return arguments.length ? (this._edgeColor = _, this) : this._edgeColor;
+  }
+
+  textColor(_) {
+    return arguments.length ? (this._textColor = _, this) : this._textColor;
   }
 
   displayValues(_) {

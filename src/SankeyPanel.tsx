@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { PanelProps } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 import { SankeyOptions } from 'types';
 import { Sankey } from 'Sankey'
 import { ErrorMessage } from 'Error'
@@ -19,6 +20,9 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   // -------------------------    REACT HOOKS    --------------------------
   const [ error, setError ] = useState({ isError: false, message: '' })
   const [ graph, setGraph ] = useState({ nodes: [], links: [] })
+  
+  const theme = useTheme2();
+  const textColor = theme.colors.text.primary;
 
   useEffect(() => {
     data.error
@@ -82,6 +86,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
       .width(width)
       .height(height)
       .align(options.align)
+      .textColor(textColor)
       .edgeColor(options.edgeColor)
       .colorScheme(options.colorScheme)
       .displayValues(options.displayValues)
