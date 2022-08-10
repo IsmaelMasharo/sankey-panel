@@ -24,7 +24,6 @@ export class Sankey {
     this._marginBottom = 20;
     this._marginLeft = 20;
 
-    this._background = '#f8f8fa';
     this._edgeColor = 'path';
     this._colorScheme = 'Tableau10';
     this._colorScale = null;
@@ -218,9 +217,6 @@ export class Sankey {
   // ------------------------------   DRAWING   -------------------------------
 
   _renderSVG() {
-    // BACKGROUND
-    this._container.style('background-color', this._background)
-
     // BOUNDS
     this._gBound = this._container.append('g')
         .attr('transform', `translate(${this._marginLeft}, ${this._marginTop})`);
