@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { PanelProps } from '@grafana/data';
+import { useTheme2 } from '@grafana/ui';
 import { SankeyOptions } from 'types';
 import { Sankey } from 'Sankey'
 import { ErrorMessage } from 'Error'
@@ -19,6 +20,9 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   // -------------------------    REACT HOOKS    --------------------------
   const [ error, setError ] = useState({ isError: false, message: '' })
   const [ graph, setGraph ] = useState({ nodes: [], links: [] })
+  
+  const theme = useTheme2();
+  const textColor = theme.colors.text.primary;
 
   useEffect(() => {
     data.error
@@ -71,7 +75,7 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
   
     const nodes = Array.from(new Set(sources.concat(targets))).map(node => ({ name: node }));
     const links = zip.map(d => ({ source: d[0], target: d[1], value: +d[2].toFixed(2) }));
-    const graph = { nodes, links };
+    const graph = { nodes, links, valueDisplay: valueAccesor.display };
 
     return graph
   }
@@ -82,10 +86,14 @@ export const SankeyPanel: React.FC<Props> = ({ options, data, width, height }) =
       .width(width)
       .height(height)
       .align(options.align)
+      .textColor(textColor)
       .edgeColor(options.edgeColor)
       .colorScheme(options.colorScheme)
       .displayValues(options.displayValues)
       .highlightOnHover(options.highlightOnHover)
+      .nodeWidth(options.nodeWidth)
+      .nodePadding(options.nodePadding)
+      .iterations(options.iterations)
       .data(graph)
 
     try {

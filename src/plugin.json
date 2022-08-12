@@ -1,9 +1,9 @@
 {
   "type": "panel",
-  "name": "sankey-panel",
+  "name": "Sankey Panel",
   "id": "ismael-sankey-panel",
   "info": {
-    "description": "Sankey chart panel for grafana using d3",
+    "description": "Sankey diagram panel for Grafana",
     "author": {
       "name": "Ismael",
       "url": ""

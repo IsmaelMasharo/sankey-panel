@@ -24,7 +24,7 @@ export class Sankey {
     this._marginBottom = 20;
     this._marginLeft = 20;
 
-    this._background = '#f8f8fa';
+    this._textColor = '#000000';
     this._edgeColor = 'path';
     this._colorScheme = 'Tableau10';
     this._colorScale = null;
@@ -32,14 +32,15 @@ export class Sankey {
     this._sankeyAlignType = 'Justify';
     this._sankeyAlign = null;
     this._sankeyGenerator = null;
-    this._sankeyNodeWith = 15;
-    this._sankeyNodePadding = 20;
 
     this._svgNode = null;
     this._svgLink = null;
 
     this._displayValues = 'none';
     this._highlightOnHover = false;
+	this._nodeWidth = 24;
+	this._nodePadding = 8;
+	this._iterations = 6;
 
   }
   
@@ -76,8 +77,9 @@ export class Sankey {
       .sankey()
       .nodeId(d => d.name)
       .nodeAlign(this._sankeyAlign)
-      .nodeWidth(this._sankeyNodeWith)
-      .nodePadding(this._sankeyNodePadding)
+      .nodeWidth(this._nodeWidth)
+      .nodePadding(this._nodePadding)
+      .iterations(this._iterations)
       .extent([
         [0, 0],
         [this._boundedWidth, this._boundedHeight],
@@ -188,14 +190,16 @@ export class Sankey {
   };
 
   // NODE LABELING
-  _formatValue(value) { return d3.format('.2~f')(value); }
+  _formatValue(value) {
+    const display = this._data.valueDisplay(value);
+    return (display.prefix ? display.prefix : '') + display.text + (display.suffix ? display.suffix : '');
+  }
   _formatPercent(percent)  { return d3.format('.2~%')(percent); }
-  _formatThousand(value) { return d3.format('.3~s')(value); }
 
   _labelNode(currentNode) {
     const nodesAtDepth = this._nodes.filter(node => node.depth === currentNode.depth);
     const totalAtDepth = d3.sum(nodesAtDepth, node => node.value);
-    const nodeValue = this._formatThousand(currentNode.value);
+    const nodeValue = this._formatValue(currentNode.value);
     const nodePercent = this._formatPercent(currentNode.value / totalAtDepth);
 
     let label = currentNode.name;
@@ -218,9 +222,6 @@ export class Sankey {
   // ------------------------------   DRAWING   -------------------------------
 
   _renderSVG() {
-    // BACKGROUND
-    this._container.style('background-color', this._background)
-
     // BOUNDS
     this._gBound = this._container.append('g')
         .attr('transform', `translate(${this._marginLeft}, ${this._marginTop})`);
@@ -267,7 +268,8 @@ export class Sankey {
     this._gBound
       .append('g')
         .attr('font-family', 'sans-serif')
-        .attr('font-size', 10)
+        .attr('font-size', 12)
+        .attr('fill', this._textColor)
       .selectAll('text')
       .data(this._nodes)
       .join('text')
@@ -315,12 +317,28 @@ export class Sankey {
     return arguments.length ? (this._edgeColor = _, this) : this._edgeColor;
   }
 
+  textColor(_) {
+    return arguments.length ? (this._textColor = _, this) : this._textColor;
+  }
+
   displayValues(_) {
     return arguments.length ? (this._displayValues = _, this) : this._displayValues;
   }
 
   highlightOnHover(_) {
     return arguments.length ? (this._highlightOnHover = _, this) : this._highlightOnHover;
+  }
+
+  nodeWidth(_) {
+    return arguments.length ? (this._nodeWidth = _, this) : this._nodeWidth;
+  }
+
+  nodePadding(_) {
+    return arguments.length ? (this._nodePadding = _, this) : this._nodePadding;
+  }
+
+  iterations(_) {
+    return arguments.length ? (this._iterations = _, this) : this._iterations;
   }
 
   render() {

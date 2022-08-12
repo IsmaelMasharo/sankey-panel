@@ -19,4 +19,7 @@ export interface SankeyOptions {
   colorScheme: Color;
   displayValues: DisplayValues;
   highlightOnHover: boolean;
+  nodeWidth: number;
+  nodePadding: number;
+  iterations: number;
 }
